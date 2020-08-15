@@ -1,0 +1,324 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from keras.preprocessing.image import ImageDataGenerator"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dataGen= ImageDataGenerator(width_shift_range=0.1,   # 0.1 = 10%     IF MORE THAN 1 E.G 10 THEN IT REFFERS TO NO. OF  PIXELS EG 10 PIXELS\n",
+    "                            height_shift_range=0.1,\n",
+    "                            zoom_range=0.2,  # 0.2 MEANS CAN GO FROM 0.8 TO 1.2\n",
+    "                            shear_range=0.1,  # MAGNITUDE OF SHEAR ANGLE\n",
+    "                            rotation_range=10)  # DEGREES"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import cv2\n",
+    "import os"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Total Classes Detected: 3\n",
+      "Importing Classes.....\n",
+      "0 1 2  \n"
+     ]
+    }
+   ],
+   "source": [
+    "path = 'car_data/0'\n",
+    "image_size = (224,224)\n",
+    "count = 0\n",
+    "images = []\n",
+    "classNo = []\n",
+    "myList = os.listdir(path)\n",
+    "print(\"Total Classes Detected:\",len(myList))\n",
+    "noOfClasses=len(myList)\n",
+    "print(\"Importing Classes.....\")\n",
+    "for x in range (0,len(myList)):\n",
+    "    myPicList = os.listdir(path+\"/\"+str(count))\n",
+    "    for y in myPicList:\n",
+    "        curImg = cv2.imread(path+\"/\"+str(count)+\"/\"+y)\n",
+    "        curImg = cv2.resize(curImg,image_size)\n",
+    "        images.append(curImg)\n",
+    "        classNo.append(count)\n",
+    "    print(count, end =\" \")\n",
+    "    count +=1\n",
+    "print(\" \")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "images = np.array(images)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['download (1).png', 'download (2).png', 'download (4).png', 'download.png', 'images (1).png', 'images (2).png', 'images (3).png', 'images (4).png', 'images (5).png', 'images (6).png', 'images (7).png', 'images.png']\n",
+      "download (1).png\n",
+      "download (2).png\n",
+      "download (4).png\n",
+      "download.png\n",
+      "images (1).png\n",
+      "images (2).png\n",
+      "images (3).png\n",
+      "images (4).png\n",
+      "images (5).png\n",
+      "images (6).png\n",
+      "images (7).png\n",
+      "images.png\n"
+     ]
+    }
+   ],
+   "source": [
+    "rf_path = 'car_data/0'\n",
+    "image_size = (224,224)\n",
+    "count = 0\n",
+    "rf_images = []\n",
+    "rf_img = os.listdir(path)\n",
+    "print(rf_img)\n",
+    "for y in rf_img:\n",
+    "    print(y)\n",
+    "    curImg = cv2.imread(rf_path+\"/\"+y)\n",
+    "    curImg = cv2.resize(curImg,image_size)\n",
+    "    rf_images.append(curImg)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rf_images = np.array(rf_images)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "i =0\n",
+    "for batch in dataGen.flow(rf_images, batch_size=1, save_to_dir='car_data/0', save_prefix=\"rf\", save_format=\"png\"):\n",
+    "    i += 1\n",
+    "    if i > 100:\n",
+    "        break"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['download (1).png', 'download (2).png', 'download (3).png', 'download (6).png', 'download.png', 'images (1).png', 'images (2).png', 'images (3).png', 'images (4).png', 'images.png']\n",
+      "download (1).png\n",
+      "download (2).png\n",
+      "download (3).png\n",
+      "download (6).png\n",
+      "download.png\n",
+      "images (1).png\n",
+      "images (2).png\n",
+      "images (3).png\n",
+      "images (4).png\n",
+      "images.png\n"
+     ]
+    }
+   ],
+   "source": [
+    "ymh_path = 'car_data/1'\n",
+    "image_size = (224,224)\n",
+    "count = 0\n",
+    "ymh_images = []\n",
+    "ymh_img = os.listdir(ymh_path)\n",
+    "print(ymh_img)\n",
+    "for y in ymh_img:\n",
+    "    print(y)\n",
+    "    curImg = cv2.imread(ymh_path+\"/\"+y)\n",
+    "    curImg = cv2.resize(curImg,image_size)\n",
+    "    ymh_images.append(curImg)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['download (1).png',\n",
+       " 'download (2).png',\n",
+       " 'download (3).png',\n",
+       " 'download (6).png',\n",
+       " 'download.png',\n",
+       " 'images (1).png',\n",
+       " 'images (2).png',\n",
+       " 'images (3).png',\n",
+       " 'images (4).png',\n",
+       " 'images.png']"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ymh_img"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ymh_images = np.array(ymh_images)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "i =0\n",
+    "for batch in dataGen.flow(ymh_images, batch_size=1, save_to_dir='car_data/1', save_prefix=\"ymh\", save_format=\"png\"):\n",
+    "    i += 1\n",
+    "    if i > 100:\n",
+    "        break"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['download (1).png', 'download (2).png', 'download (3).png', 'download (4).png', 'download (5).png', 'download.png', 'images (1).png', 'images (2).png', 'images (3).png', 'images (4).png', 'images (5).png', 'images (6).png', 'images (7).png', 'images (8).png', 'images (9).png', 'images.png']\n",
+      "download (1).png\n",
+      "download (2).png\n",
+      "download (3).png\n",
+      "download (4).png\n",
+      "download (5).png\n",
+      "download.png\n",
+      "images (1).png\n",
+      "images (2).png\n",
+      "images (3).png\n",
+      "images (4).png\n",
+      "images (5).png\n",
+      "images (6).png\n",
+      "images (7).png\n",
+      "images (8).png\n",
+      "images (9).png\n",
+      "images.png\n"
+     ]
+    }
+   ],
+   "source": [
+    "ktm_path = 'car_data/2'\n",
+    "image_size = (224,224)\n",
+    "count = 0\n",
+    "ktm_images = []\n",
+    "ktm_img = os.listdir(ktm_path)\n",
+    "print(ktm_img)\n",
+    "for y in ktm_img:\n",
+    "    curImg = cv2.imread(ktm_path+\"/\"+y)\n",
+    "    curImg = cv2.resize(curImg,image_size)\n",
+    "    ktm_images.append(curImg)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ktm_images = np.array(ktm_images)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "i =0\n",
+    "for batch in dataGen.flow(ktm_images, batch_size=1, save_to_dir='car_data/2', save_prefix=\"ktm\", save_format=\"png\"):\n",
+    "    i += 1\n",
+    "    if i > 100:\n",
+    "        break"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
